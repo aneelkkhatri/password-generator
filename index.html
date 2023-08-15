@@ -15,6 +15,10 @@
 </head>
 <body>
 	<input id="password"></input>
+	<input class="characters-checkbox" type="checkbox" name="digits">Digits</input>
+	<input class="characters-checkbox" type="checkbox" name="lc-letters">Lower Case Letters</input>
+	<input class="characters-checkbox" type="checkbox" name="uc-letters">Upper Case Letters</input>
+	<input class="characters-checkbox" type="checkbox" name="symbols">Symbols</input>
 	<!-- <button id="button">Generate</button> -->
 	<script type="text/javascript">
 		let passwordLength = 10;
@@ -23,10 +27,17 @@
 		let upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		let symbols = " !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
 		let list = [ digits, lowerCaseLetters, upperCaseLetters, symbols ];
-		let allowed = [0, 1, 2, 3];
+		let allowed = [];
 		let allowedCharactersList = allowed.map(index => list[index]);
 		let combinedCharacters = allowedCharactersList.join('');
-
+		let checkboxes = Array.from(document.querySelectorAll('.characters-checkbox'));
+		checkboxes.forEach(el => {
+			el.addEventListener('change', e => {
+				allowed = checkboxes.map((el, index) => [el.checked, index]).filter(o => o[0]).map(o => o[1]);
+				allowedCharactersList = allowed.map(index => list[index]);
+				combinedCharacters = allowedCharactersList.join('');
+			})
+		});
 		function generate(length) {
 			let password = [];
 			for (let i = 0; i < allowedCharactersList.length; ++i) {
@@ -35,14 +46,12 @@
 			for (let i = allowedCharactersList.length; i < length; ++i) {
 			    password.push(combinedCharacters[Math.floor(Math.random()*combinedCharacters.length)])
 			}
-			console.log('before', password);
 			for (let i = 0; i < password.length; ++i) {
 				let j = Math.floor(Math.random() * password.length);
 				let tmp = password[i];
 				password[i] = password[j];
 				password[j] = tmp;
 			}
-			console.log('after', password);
 			return password.join('');
 		}
 
