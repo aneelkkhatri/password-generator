@@ -15,28 +15,49 @@
 </head>
 <body>
 	<input id="password"></input>
-	<button id="button">Generate</button>
+	<!-- <button id="button">Generate</button> -->
 	<script type="text/javascript">
-		let letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()'.split('');
+		let passwordLength = 10;
+		let digits = '1234567890';
+		let lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+		let upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		let symbols = " !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
+		let list = [ digits, lowerCaseLetters, upperCaseLetters, symbols ];
+		let allowed = [0, 1, 2, 3];
+		let allowedCharactersList = allowed.map(index => list[index]);
+		let combinedCharacters = allowedCharactersList.join('');
+
 		function generate(length) {
 			let password = [];
-			for (let i = 0; i < length; ++i) {
-			    password.push(letters[Math.floor(Math.random()*letters.length)])
+			for (let i = 0; i < allowedCharactersList.length; ++i) {
+				password.push(allowedCharactersList[i][Math.floor(Math.random()*allowedCharactersList[i].length)])
 			}
+			for (let i = allowedCharactersList.length; i < length; ++i) {
+			    password.push(combinedCharacters[Math.floor(Math.random()*combinedCharacters.length)])
+			}
+			console.log('before', password);
+			for (let i = 0; i < password.length; ++i) {
+				let j = Math.floor(Math.random() * password.length);
+				let tmp = password[i];
+				password[i] = password[j];
+				password[j] = tmp;
+			}
+			console.log('after', password);
 			return password.join('');
 		}
-		document.getElementById('button').addEventListener('click', e => {
-			let start = Date.now();
+
+		// document.getElementById('button').addEventListener('click', e => {
+		// 	let start = Date.now();
 			function generateAndLoad() {
-				if (Date.now () - start > 100) {
-					return;
-				}
+				// if (Date.now () - start > 100) {
+				// 	return;
+				// }
 
 				document.getElementById('password').value = generate(10);
-				requestAnimationFrame(generateAndLoad);
+				setTimeout(generateAndLoad, 100);
 			}
 			generateAndLoad();
-		});
+		// });
 	</script>
 </body>
 </html>
