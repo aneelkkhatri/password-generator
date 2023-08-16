@@ -5,29 +5,38 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Password Generator</title>
 	<style type="text/css">
-		input {
+		* {
+			font-size: 48px;
+			font-family: monospace;
+		}
+		input  {
 			font-family: monospace;
 		}
 		input, button {
 			font-size: 48px;
 		}
+		input[type='checkbox'] {
+			width:  28px;
+			height:  28px;
+		}
 	</style>
 </head>
 <body>
-	<input id="password"></input>
-	<input class="characters-checkbox" type="checkbox" name="digits">Digits</input>
-	<input class="characters-checkbox" type="checkbox" name="lc-letters">Lower Case Letters</input>
-	<input class="characters-checkbox" type="checkbox" name="uc-letters">Upper Case Letters</input>
-	<input class="characters-checkbox" type="checkbox" name="symbols">Symbols</input>
-	<!-- <button id="button">Generate</button> -->
+	<input id="password"></input><button id="button">Generate</button><br/>
+	<input class="characters-checkbox" type="checkbox" name="digits" checked>Digits</input><br/>
+	<input class="characters-checkbox" type="checkbox" name="lc-letters" checked>Lower Case Letters</input><br/>
+	<input class="characters-checkbox" type="checkbox" name="uc-letters" checked>Upper Case Letters</input><br/>
+	<input class="characters-checkbox" type="checkbox" name="symbols" checked>Symbols</input><br/>
+	
+	<div id="safety-score"></div>
 	<script type="text/javascript">
 		let passwordLength = 10;
 		let digits = '1234567890';
 		let lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
 		let upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		let symbols = " !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
+		let symbols = "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
 		let list = [ digits, lowerCaseLetters, upperCaseLetters, symbols ];
-		let allowed = [];
+		let allowed = [0, 1, 2, 3];
 		let allowedCharactersList = allowed.map(index => list[index]);
 		let combinedCharacters = allowedCharactersList.join('');
 		let checkboxes = Array.from(document.querySelectorAll('.characters-checkbox'));
@@ -36,15 +45,25 @@
 				allowed = checkboxes.map((el, index) => [el.checked, index]).filter(o => o[0]).map(o => o[1]);
 				allowedCharactersList = allowed.map(index => list[index]);
 				combinedCharacters = allowedCharactersList.join('');
+				generateAndLoad();
 			})
 		});
+		function random() {
+			let value = Math.pow((Math.random() + 1), 2) % 1;
+			// console.log(value);
+			return value;
+		}
+
+		function randomIndex(maxLength) {
+			return Math.floor(random()*maxLength)
+		}
 		function generate(length) {
 			let password = [];
 			for (let i = 0; i < allowedCharactersList.length; ++i) {
-				password.push(allowedCharactersList[i][Math.floor(Math.random()*allowedCharactersList[i].length)])
+				password.push(allowedCharactersList[i][randomIndex(allowedCharactersList[i].length)])
 			}
 			for (let i = allowedCharactersList.length; i < length; ++i) {
-			    password.push(combinedCharacters[Math.floor(Math.random()*combinedCharacters.length)])
+			    password.push(combinedCharacters[randomIndex(combinedCharacters.length)])
 			}
 			for (let i = 0; i < password.length; ++i) {
 				let j = Math.floor(Math.random() * password.length);
@@ -55,18 +74,25 @@
 			return password.join('');
 		}
 
-		// document.getElementById('button').addEventListener('click', e => {
-		// 	let start = Date.now();
-			function generateAndLoad() {
-				// if (Date.now () - start > 100) {
-				// 	return;
-				// }
+		document.getElementById('button').addEventListener('click', generateAndLoad);
 
-				document.getElementById('password').value = generate(10);
-				setTimeout(generateAndLoad, 100);
+		function generateAndLoad() {
+			let password = generate(passwordLength);
+			document.getElementById('password').value = password;
+			calculateAndUpdateSafetyScore(password);
+		}
+		function calculateAndUpdateSafetyScore(password) {
+			let uniqueCharsCount = new Set(password.split('')).size;
+			let safetyScoreEl = document.getElementById('safety-score');
+			if (uniqueCharsCount < 5) {
+				safetyScoreEl.textContent = 'Weak Password';
+			} else if (uniqueCharsCount < 8) {
+				safetyScoreEl.textContent = 'Fair Password';
+			} else {
+				safetyScoreEl.textContent = 'Strong Password';
 			}
-			generateAndLoad();
-		// });
+		}
+		generateAndLoad();
 	</script>
 </body>
 </html>
