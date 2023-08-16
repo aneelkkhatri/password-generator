@@ -115,10 +115,13 @@
 			let safetyScoreEl = document.getElementById('safety-score');
 			if (uniqueCharsCount < 5) {
 				safetyScoreEl.textContent = 'Weak Password';
+				document.body.style.backgroundColor = '#fdd'
 			} else if (uniqueCharsCount < 8) {
 				safetyScoreEl.textContent = 'Fair Password';
+				document.body.style.backgroundColor = '#ffc'
 			} else {
 				safetyScoreEl.textContent = 'Strong Password';
+				document.body.style.backgroundColor = '#dfd'
 			}
 		}
 		generateAndLoad();
