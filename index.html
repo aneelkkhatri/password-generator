@@ -19,6 +19,33 @@
 			width:  28px;
 			height:  28px;
 		}
+		input#password-length.slider {
+			width: 848px;
+		}
+
+		input[type='range'] {
+			/*overflow: hidden;*/
+			/*width: 80px;*/
+			-webkit-appearance: none;
+			background-color: #eee;
+		}
+
+		input[type='range']::-webkit-slider-runnable-track {
+	        height: 24px;
+	        -webkit-appearance: none;
+	        color: #333;
+	        /*margin-top: -12px;*/
+	    }
+
+	    input[type='range']::-webkit-slider-thumb {
+	        width: 48px;
+	        -webkit-appearance: none;
+	        height: 48px;
+	        cursor: ew-resize;
+	        background: #434343;
+	        margin-top: -12px;
+	        
+	    }
 	</style>
 </head>
 <body>
@@ -27,10 +54,11 @@
 	<input class="characters-checkbox" type="checkbox" name="lc-letters" checked>Lower Case Letters</input><br/>
 	<input class="characters-checkbox" type="checkbox" name="uc-letters" checked>Upper Case Letters</input><br/>
 	<input class="characters-checkbox" type="checkbox" name="symbols" checked>Symbols</input><br/>
-	
+	<input type="range" min="4" max="40" value="10" class="slider" id="password-length">
+
 	<div id="safety-score"></div>
 	<script type="text/javascript">
-		let passwordLength = 10;
+		let passwordLengthEl = document.getElementById('password-length');
 		let digits = '1234567890';
 		let lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
 		let upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -74,10 +102,11 @@
 			return password.join('');
 		}
 
+		passwordLengthEl.addEventListener('input', generateAndLoad);
 		document.getElementById('button').addEventListener('click', generateAndLoad);
 
 		function generateAndLoad() {
-			let password = generate(passwordLength);
+			let password = generate(parseInt(passwordLengthEl.value));
 			document.getElementById('password').value = password;
 			calculateAndUpdateSafetyScore(password);
 		}
