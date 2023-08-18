@@ -6,30 +6,45 @@
 	<title>Password Generator</title>
 	<style type="text/css">
 		* {
-			font-size: 48px;
+			font-size: 18px;
 			font-family: monospace;
+			line-height: 48px;
+			margin: 0;
+		}
+		div#main {
+			width: 100%;
+			max-width: 720px;
+			margin: auto;
 		}
 		input  {
 			font-family: monospace;
 		}
 		input, button {
-			font-size: 48px;
+			font-size: 30px;
+		}
+		input#password {
+			width: 100%;
+			box-sizing: border-box;
 		}
 		input[type='checkbox'] {
-			width:  28px;
-			height:  28px;
+			width:  18px;
+			height:  18px;
+		}
+		span.checkbox-text {
+			/*color:  red;*/
 		}
 		input#password-length.slider {
-			width: 848px;
+			width: 100%;
 		}
-
+body {
+  --thumbNumber: "5"; /* updates on slider input via JavaScript function */
+}
 		input[type='range'] {
 			/*overflow: hidden;*/
 			/*width: 80px;*/
 			-webkit-appearance: none;
 			background-color: #eee;
 		}
-
 		input[type='range']::-webkit-slider-runnable-track {
 	        height: 24px;
 	        -webkit-appearance: none;
@@ -42,22 +57,31 @@
 	        -webkit-appearance: none;
 	        height: 48px;
 	        cursor: ew-resize;
-	        background: #434343;
+	        background: #888;
 	        margin-top: -12px;
-	        
+	        border-radius: 0;
 	    }
+	    input[type='range']::-webkit-slider-thumb::before {
+			  content: var(--thumbNumber);
+
+		}
 	</style>
 </head>
 <body>
-	<input id="password"></input><button id="button">Generate</button><br/>
-	<input class="characters-checkbox" type="checkbox" name="digits" checked>Digits (0-9)</input><br/>
-	<input class="characters-checkbox" type="checkbox" name="lc-letters" checked>Lower Case Letters (e.g. abc)</input><br/>
-	<input class="characters-checkbox" type="checkbox" name="uc-letters" checked>Upper Case Letters (e.g. ABC)</input><br/>
-	<input class="characters-checkbox" type="checkbox" name="symbols" checked>Symbols (e.g. #?%@&)</input><br/>
-	<input type="range" min="4" max="40" value="10" class="slider" id="password-length">
+	<div id="main">
+		<h1>Password Generator</h1>
+		<input id="password"></input><br/>
+		<input class="characters-checkbox" type="checkbox" name="digits" checked><span class="checkbox-text">Digits (0-9)</span></input><br/>
+		<input class="characters-checkbox" type="checkbox" name="lc-letters" checked><span class="checkbox-text">Lower Case Letters (e.g. abc)</span></input><br/>
+		<input class="characters-checkbox" type="checkbox" name="uc-letters" checked><span class="checkbox-text">Upper Case Letters (e.g. ABC)</span></input><br/>
+		<input class="characters-checkbox" type="checkbox" name="symbols" checked><span class="checkbox-text">Symbols (e.g. #?%@&)</span></input><br/>
+		<input type="range" min="4" max="40" value="10" class="slider" id="password-length">
+		<button id="button">Refresh</button><br/>
 
-	<div id="safety-score"></div>
+		<div id="safety-score"></div>
+	</div>
 	<script type="text/javascript">
+		let passwordEl = document.getElementById('password');
 		let passwordLengthEl = document.getElementById('password-length');
 		let digits = '1234567890';
 		let lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
@@ -107,7 +131,7 @@
 
 		function generateAndLoad() {
 			let password = generate(parseInt(passwordLengthEl.value));
-			document.getElementById('password').value = password;
+			passwordEl.value = password;
 			calculateAndUpdateSafetyScore(password);
 		}
 		function calculateAndUpdateSafetyScore(password) {
@@ -115,13 +139,13 @@
 			let safetyScoreEl = document.getElementById('safety-score');
 			if (uniqueCharsCount < 5) {
 				safetyScoreEl.textContent = 'Weak Password';
-				document.body.style.backgroundColor = '#fdd'
+				passwordEl.style.backgroundColor = '#ffbeaa'
 			} else if (uniqueCharsCount < 8) {
 				safetyScoreEl.textContent = 'Fair Password';
-				document.body.style.backgroundColor = '#ffc'
+				passwordEl.style.backgroundColor = '#faee9a'
 			} else {
 				safetyScoreEl.textContent = 'Strong Password';
-				document.body.style.backgroundColor = '#dfd'
+				passwordEl.style.backgroundColor = '#dfffca'
 			}
 		}
 		generateAndLoad();
