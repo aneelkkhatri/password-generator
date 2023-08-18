@@ -21,7 +21,7 @@
 			font-family: monospace;
 		}
 		input, button {
-			font-size: 30px;
+			font-size: 28px;
 		}
 		input#password {
 			width: 100%;
@@ -72,19 +72,26 @@
 			pointer-events: none;
 			margin-top: 2px;
 			font-size: 22px;
-			color: #ddd;
+			color: #eee;
 			font-weight: bold;
+		}
+		.characters-checkbox, .characters-text {
+			vertical-align: middle;
 		}
 	</style>
 </head>
 <body>
 	<div id="main">
-		<h1>Password Generator</h1>
-		<input id="password"></input><br/>
-		<input class="characters-checkbox" type="checkbox" name="digits" checked><span class="checkbox-text">Digits (0-9)</span></input><br/>
-		<input class="characters-checkbox" type="checkbox" name="lc-letters" checked><span class="checkbox-text">Lower Case Letters (e.g. abc)</span></input><br/>
-		<input class="characters-checkbox" type="checkbox" name="uc-letters" checked><span class="checkbox-text">Upper Case Letters (e.g. ABC)</span></input><br/>
-		<input class="characters-checkbox" type="checkbox" name="symbols" checked><span class="checkbox-text">Symbols (e.g. #?%@&)</span></input><br/>
+		<div style="font-size: 44px; line-height: 100px;">Password Generator</div>
+		<div style="position: relative; width: 100%">
+			<input id="password"></input><br/>
+			<span style="position: absolute; top: 4px; left: 100%; margin-left: -33px; font-size: 28px; display: none;">&#128203;</span>
+		</div>
+		
+		<input class="characters-checkbox" type="checkbox" name="digits" checked></input> <span class="checkbox-text">Digits (0-9)</span><br/>
+		<input class="characters-checkbox" type="checkbox" name="lc-letters" checked></input> <span class="checkbox-text">Lower Case Letters (e.g. abc)</span><br/>
+		<input class="characters-checkbox" type="checkbox" name="uc-letters" checked></input> <span class="checkbox-text">Upper Case Letters (e.g. ABC)</span><br/>
+		<input class="characters-checkbox" type="checkbox" name="symbols" checked></input> <span class="checkbox-text">Symbols (e.g. #?%@&)</span><br/>
 		<div class="password-length-div" style="position: relative; width: 100%">
 			<div id="password-length-bubble">10</div>
 			<input type="range" min="0" max="40" value="10" class="slider" id="password-length">
@@ -156,8 +163,11 @@
 		function refreshBubblePosition() {
 			let passwordLength = parseInt(passwordLengthEl.value);
 			passwordLengthBubbleEl.textContent = passwordLengthEl.value;
-			let percentage = passwordLength / 41.75;
-			passwordLengthBubbleEl.style.left = (100 * percentage) + '%';
+			let percentage = passwordLength / 40.5;
+			let percentageSize = passwordLengthBubbleEl.clientWidth/passwordLengthEl.clientWidth;
+			console.log('percentageSize', 100 * percentageSize);
+			// let remaining = ;
+			passwordLengthBubbleEl.style.left = 100 * (percentage - percentage * percentageSize / 2) + '%';
 		}
 
 		document.getElementById('button').addEventListener('click', generateAndLoad);
@@ -172,13 +182,13 @@
 			let uniqueCharsCount = new Set(password.split('')).size;
 			let safetyScoreEl = document.getElementById('safety-score');
 			if (uniqueCharsCount < 5) {
-				safetyScoreEl.textContent = 'Weak Password';
+				// safetyScoreEl.textContent = 'Weak Password';
 				passwordEl.style.backgroundColor = '#ffbeaa'
 			} else if (uniqueCharsCount < 8) {
-				safetyScoreEl.textContent = 'Fair Password';
+				// safetyScoreEl.textContent = 'Fair Password';
 				passwordEl.style.backgroundColor = '#faee9a'
 			} else {
-				safetyScoreEl.textContent = 'Strong Password';
+				// safetyScoreEl.textContent = 'Strong Password';
 				passwordEl.style.backgroundColor = '#dfffca'
 			}
 		}
