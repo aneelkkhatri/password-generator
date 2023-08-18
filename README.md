@@ -1,2 +1,3 @@
 # password-generator
-Just another password-generator.
+
+Quite simple password generator. Looking for ways to improve it.
