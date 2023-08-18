@@ -15,6 +15,7 @@
 			width: 100%;
 			max-width: 720px;
 			margin: auto;
+			position: relative;
 		}
 		input  {
 			font-family: monospace;
@@ -36,9 +37,7 @@
 		input#password-length.slider {
 			width: 100%;
 		}
-body {
-  --thumbNumber: "5"; /* updates on slider input via JavaScript function */
-}
+
 		input[type='range'] {
 			/*overflow: hidden;*/
 			/*width: 80px;*/
@@ -46,24 +45,35 @@ body {
 			background-color: #eee;
 		}
 		input[type='range']::-webkit-slider-runnable-track {
-	        height: 24px;
+	        height: 6px;
 	        -webkit-appearance: none;
 	        color: #333;
 	        /*margin-top: -12px;*/
 	    }
 
 	    input[type='range']::-webkit-slider-thumb {
-	        width: 48px;
+	        width: 36px;
 	        -webkit-appearance: none;
-	        height: 48px;
+	        height: 36px;
 	        cursor: ew-resize;
-	        background: #888;
-	        margin-top: -12px;
+	        background: #555;
+	        margin-top: -15px;
 	        border-radius: 0;
 	    }
 	    input[type='range']::-webkit-slider-thumb::before {
 			  content: var(--thumbNumber);
 
+		}
+		div#password-length-bubble {
+			position: absolute;
+			left: 0;
+			width: 48px;
+			height: 48px;
+			pointer-events: none;
+			margin-top: 2px;
+			font-size: 22px;
+			color: #ddd;
+			font-weight: bold;
 		}
 	</style>
 </head>
@@ -75,7 +85,10 @@ body {
 		<input class="characters-checkbox" type="checkbox" name="lc-letters" checked><span class="checkbox-text">Lower Case Letters (e.g. abc)</span></input><br/>
 		<input class="characters-checkbox" type="checkbox" name="uc-letters" checked><span class="checkbox-text">Upper Case Letters (e.g. ABC)</span></input><br/>
 		<input class="characters-checkbox" type="checkbox" name="symbols" checked><span class="checkbox-text">Symbols (e.g. #?%@&)</span></input><br/>
-		<input type="range" min="4" max="40" value="10" class="slider" id="password-length">
+		<div class="password-length-div" style="position: relative; width: 100%">
+			<div id="password-length-bubble">10</div>
+			<input type="range" min="0" max="40" value="10" class="slider" id="password-length">
+		</div>
 		<button id="button">Refresh</button><br/>
 
 		<div id="safety-score"></div>
@@ -83,6 +96,7 @@ body {
 	<script type="text/javascript">
 		let passwordEl = document.getElementById('password');
 		let passwordLengthEl = document.getElementById('password-length');
+		let passwordLengthBubbleEl = document.getElementById('password-length-bubble');
 		let digits = '1234567890';
 		let lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
 		let upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -126,11 +140,31 @@ body {
 			return password.join('');
 		}
 
-		passwordLengthEl.addEventListener('input', generateAndLoad);
+		passwordLengthEl.addEventListener('input', function (e)  {
+			let allowGeneration = true;
+			if (this.value < 4) {
+				this.value = 4;
+				allowGeneration = false;
+			}
+
+			refreshBubblePosition();
+			if (allowGeneration) {
+				generateAndLoad();
+			}
+		});
+
+		function refreshBubblePosition() {
+			let passwordLength = parseInt(passwordLengthEl.value);
+			passwordLengthBubbleEl.textContent = passwordLengthEl.value;
+			let percentage = passwordLength / 41.75;
+			passwordLengthBubbleEl.style.left = (100 * percentage) + '%';
+		}
+
 		document.getElementById('button').addEventListener('click', generateAndLoad);
 
 		function generateAndLoad() {
-			let password = generate(parseInt(passwordLengthEl.value));
+			let passwordLength = parseInt(passwordLengthEl.value);
+			let password = generate(passwordLength);
 			passwordEl.value = password;
 			calculateAndUpdateSafetyScore(password);
 		}
@@ -148,6 +182,7 @@ body {
 				passwordEl.style.backgroundColor = '#dfffca'
 			}
 		}
+		refreshBubblePosition();
 		generateAndLoad();
 	</script>
 </body>
