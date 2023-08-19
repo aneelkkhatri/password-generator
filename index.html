@@ -2,14 +2,16 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=0.75">
 	<title>Password Generator</title>
 	<style type="text/css">
 		* {
-			font-size: 18px;
+			font-size: 16px;
 			font-family: monospace;
-			line-height: 48px;
+			line-height: 36px;
 			margin: 0;
+		} body {
+			margin: 36px;
 		}
 		div#main {
 			width: 100%;
@@ -21,7 +23,7 @@
 			font-family: monospace;
 		}
 		input, button {
-			font-size: 28px;
+			font-size: 24px;
 		}
 		input#password {
 			width: 100%;
@@ -82,21 +84,21 @@
 </head>
 <body>
 	<div id="main">
-		<div style="font-size: 44px; line-height: 100px;">Password Generator</div>
-		<div style="position: relative; width: 100%">
+		<div style="font-size: 30px; line-height: 100px; font-weight: bold;">Password Generator</div>
+		<div style="position: relative; width: 100%; margin-bottom: 20px; text-align: right;">
 			<input id="password"></input><br/>
 			<span style="position: absolute; top: 4px; left: 100%; margin-left: -33px; font-size: 28px; display: none;">&#128203;</span>
+			<button id="button">Refresh</button>
 		</div>
 		
 		<input class="characters-checkbox" type="checkbox" name="digits" checked></input> <span class="checkbox-text">Digits (0-9)</span><br/>
 		<input class="characters-checkbox" type="checkbox" name="lc-letters" checked></input> <span class="checkbox-text">Lower Case Letters (e.g. abc)</span><br/>
 		<input class="characters-checkbox" type="checkbox" name="uc-letters" checked></input> <span class="checkbox-text">Upper Case Letters (e.g. ABC)</span><br/>
 		<input class="characters-checkbox" type="checkbox" name="symbols" checked></input> <span class="checkbox-text">Symbols (e.g. #?%@&)</span><br/>
-		<div class="password-length-div" style="position: relative; width: 100%">
+		<div class="password-length-div" style="position: relative;width: 100%;margin-top: 10px;margin-bottom: 16px;">
 			<div id="password-length-bubble">10</div>
 			<input type="range" min="0" max="40" value="10" class="slider" id="password-length">
 		</div>
-		<button id="button">Refresh</button><br/>
 
 		<div id="safety-score"></div>
 		<div>
@@ -140,12 +142,20 @@
 		}
 		function generate(length) {
 			let password = [];
+			let initialIndexes = window.crypto.getRandomValues(new Uint8Array(allowedCharactersList.length))
+				.map(o => o % allowedCharactersList.length);
 			for (let i = 0; i < allowedCharactersList.length; ++i) {
-				password.push(allowedCharactersList[i][randomIndex(allowedCharactersList[i].length)])
+				password.push(allowedCharactersList[i][initialIndexes[i]])
 			}
-			for (let i = allowedCharactersList.length; i < length; ++i) {
-			    password.push(combinedCharacters[randomIndex(combinedCharacters.length)])
-			}
+			window.crypto.getRandomValues(new Uint8Array(length - allowedCharactersList.length))
+				.map(o => o % combinedCharacters.length)
+				.forEach(index => password.push(combinedCharacters[index]));
+			// for (let i = 0; i < allowedCharactersList.length; ++i) {
+			// 	password.push(allowedCharactersList[i][randomIndex(allowedCharactersList[i].length)])
+			// }
+			// for (let i = allowedCharactersList.length; i < length; ++i) {
+			//     password.push(combinedCharacters[randomIndex(combinedCharacters.length)])
+			// }
 			for (let i = 0; i < password.length; ++i) {
 				let j = Math.floor(Math.random() * password.length);
 				let tmp = password[i];
