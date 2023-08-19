@@ -80,6 +80,22 @@
 		.characters-checkbox, .characters-text {
 			vertical-align: middle;
 		}
+		#copy-container #copy-response {
+			display: none;
+		}
+		#copy-container.active #copy-response {
+		    animation: fadeOut 2s forwards;
+		    animation-delay: 0s;
+		    padding: 12px;
+		    text-align: center;
+		    display: inline;
+		    font-size: 22px;
+		}
+
+		@keyframes fadeOut {
+		    from {opacity: 1;}
+		    to {opacity: 0;}
+		}
 	</style>
 </head>
 <body>
@@ -88,7 +104,7 @@
 		<div style="position: relative; width: 100%; margin-bottom: 20px; text-align: right;">
 			<input id="password"></input><br/>
 			<span style="position: absolute; top: 4px; left: 100%; margin-left: -33px; font-size: 28px; display: none;">&#128203;</span>
-			<button id="copy-button">Copy</button><button id="refresh-button">Refresh</button>
+			<span id="copy-container"><span id="copy-response">✓</span></span><button id="copy-button">Copy</button></span><button id="refresh-button">Refresh</button>
 		</div>
 		
 		<input class="characters-checkbox" type="checkbox" name="digits" checked></input> <span class="checkbox-text">Digits (0-9)</span><br/>
@@ -183,6 +199,10 @@
 			passwordEl.select();
 			passwordEl.setSelectionRange(0, 40);
 			document.execCommand('copy');
+			document.getElementById('copy-container').setAttribute('class', '');
+			requestAnimationFrame(() => {
+				document.getElementById('copy-container').setAttribute('class', 'active');
+			});
 		});
 
 		function generateAndLoad() {
