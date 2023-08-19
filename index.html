@@ -88,7 +88,7 @@
 		<div style="position: relative; width: 100%; margin-bottom: 20px; text-align: right;">
 			<input id="password"></input><br/>
 			<span style="position: absolute; top: 4px; left: 100%; margin-left: -33px; font-size: 28px; display: none;">&#128203;</span>
-			<button id="button">Refresh</button>
+			<button id="copy-button">Copy</button><button id="refresh-button">Refresh</button>
 		</div>
 		
 		<input class="characters-checkbox" type="checkbox" name="digits" checked></input> <span class="checkbox-text">Digits (0-9)</span><br/>
@@ -131,15 +131,16 @@
 				generateAndLoad();
 			})
 		});
-		function random() {
-			let value = Math.pow((Math.random() + 1), 2) % 1;
-			// console.log(value);
-			return value;
+
+		function shuffle(items) {
+			for (let i = 0; i < items.length; ++i) {
+				let j = Math.floor(Math.random() * items.length);
+				let tmp = items[i];
+				items[i] = items[j];
+				items[j] = tmp;
+			}
 		}
 
-		function randomIndex(maxLength) {
-			return Math.floor(random()*maxLength)
-		}
 		function generate(length) {
 			let password = [];
 			let initialIndexes = window.crypto.getRandomValues(new Uint8Array(allowedCharactersList.length))
@@ -150,18 +151,7 @@
 			window.crypto.getRandomValues(new Uint8Array(length - allowedCharactersList.length))
 				.map(o => o % combinedCharacters.length)
 				.forEach(index => password.push(combinedCharacters[index]));
-			// for (let i = 0; i < allowedCharactersList.length; ++i) {
-			// 	password.push(allowedCharactersList[i][randomIndex(allowedCharactersList[i].length)])
-			// }
-			// for (let i = allowedCharactersList.length; i < length; ++i) {
-			//     password.push(combinedCharacters[randomIndex(combinedCharacters.length)])
-			// }
-			for (let i = 0; i < password.length; ++i) {
-				let j = Math.floor(Math.random() * password.length);
-				let tmp = password[i];
-				password[i] = password[j];
-				password[j] = tmp;
-			}
+			shuffle(password);
 			return password.join('');
 		}
 
@@ -188,7 +178,12 @@
 			passwordLengthBubbleEl.style.left = 100 * (percentage - percentage * percentageSize / 2) + '%';
 		}
 
-		document.getElementById('button').addEventListener('click', generateAndLoad);
+		document.getElementById('refresh-button').addEventListener('click', generateAndLoad);
+		document.getElementById('copy-button').addEventListener('click', e => {
+			passwordEl.select();
+			passwordEl.setSelectionRange(0, 40);
+			document.execCommand('copy');
+		});
 
 		function generateAndLoad() {
 			let passwordLength = parseInt(passwordLengthEl.value);
